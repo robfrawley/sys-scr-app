@@ -11,16 +11,16 @@
 
 namespace App\CommandConfiguration;
 
-use App\Command\UpdateEnvDbVerCommand;
+use App\Command\EnvCfgUpdateDbVerCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class UpdateEnvDbVerCommandConfiguration extends AbstractCommandConfiguration
+class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
 {
     /**
      * @var string
      */
-    protected static string $commandReference = UpdateEnvDbVerCommand::class;
+    protected static string $commandReference = EnvCfgUpdateDbVerCommand::class;
 
     /**
      * @return InputArgument[]

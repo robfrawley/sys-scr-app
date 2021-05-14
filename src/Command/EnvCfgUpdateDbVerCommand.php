@@ -11,30 +11,32 @@
 
 namespace App\Command;
 
-use App\CommandConfiguration\UpdateEnvDbVerCommandConfiguration;
+use App\CommandConfiguration\EnvCfgUpdateDbVerCommandConfiguration;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UpdateEnvDbVerCommand extends AbstractCommand
+class EnvCfgUpdateDbVerCommand extends AbstractCommand
 {
     /**
      * Contains the static name of this command, which is used as the index to call the command from the cli console command.
      *
      * @var string
      */
-    protected static $defaultName = 'sr:env-cfg:db-ver:update';
+    protected static $defaultName = 'env-cfg:update:db-ver';
 
     /**
      * Contains set of aliases that the command can also be called using.
      *
      * @var string[]
      */
-    protected static array $aliasesList = [];
+    protected static array $aliasesList = [
+        'sr:env:update:db-ver'
+    ];
 
     /**
-     * @param UpdateEnvDbVerCommandConfiguration $configuration
+     * @param EnvCfgUpdateDbVerCommandConfiguration $configuration
      */
-    public function __construct(UpdateEnvDbVerCommandConfiguration $configuration)
+    public function __construct(EnvCfgUpdateDbVerCommandConfiguration $configuration)
     {
         parent::__construct($configuration);
     }

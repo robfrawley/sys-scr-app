@@ -14,6 +14,8 @@ namespace App\Command;
 use App\CommandConfiguration\CommandConfigurationInterface;
 use App\Component\Console\Style\AppStyle;
 use App\Utility\Version\GitVersion;
+use JetBrains\PhpStorm\Pure;
+use ReflectionException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,6 +24,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractCommand extends Command
 {
+    /**
+     * Contains the default static name prefix for all application commands.
+     *
+     * @var string
+     */
+    protected static string $defaultPref = 'src-run';
+
     /**
      * Handles setting up the command configuration options, like arguments, options, description, help text, etc.
      *
@@ -50,6 +59,26 @@ abstract class AbstractCommand extends Command
         $this->localeAwTrans = $configuration->getTranslator();
 
         parent::__construct();
+    }
+
+    /**
+     * @return string|null
+     *
+     * @throws ReflectionException
+     */
+    #[Pure] public static function getDefaultPref(): string|null
+    {
+        return property_exists(static::class, 'defaultPref') ? static::$defaultPref : null;
+    }
+
+    /**
+     * @return string|null
+     *
+     * @throws ReflectionException
+     */
+    #[Pure] public static function getDefaultName(): string|null
+    {
+        return property_exists(static::class, 'defaultName') ? static::getDefaultPref().':'.static::$defaultName : null;
     }
 
     /**
@@ -102,7 +131,7 @@ abstract class AbstractCommand extends Command
     {
         $this->appStyle = $this->configuration->setUpExec($input, $output);
         $this->style()->title(sprintf(
-            'Running Application Command: "%s" (%s)', self::getDefaultName(), self::getVersion()
+            'Application Command: "%s" (%s)', self::getDefaultName(), self::getVersion()
         ));
 
         return null;
