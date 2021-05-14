@@ -305,6 +305,12 @@
     "ramsey/uuid": {
         "version": "4.1.1"
     },
+    "roave/security-advisories": {
+        "version": "dev-latest"
+    },
+    "sebastian/version": {
+        "version": "3.0.2"
+    },
     "sulu/sulu": {
         "version": "2.2.7"
     },
