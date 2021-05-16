@@ -136,9 +136,7 @@ final class GitVersion
             \fclose($pipes[2]);
         }
 
-        return (!\is_resource($process) || 0 !== \proc_close($process))
-            ? null
-            : $result;
+        return (\is_resource($process) && 0 === \proc_close($process)) ? $result : null;
     }
 
     /**
@@ -146,6 +144,6 @@ final class GitVersion
      */
     private function getPathKey(): string
     {
-        return $this->keyPath ?? ($this->keyPath = hash('sha1', $this->gitPath));
+        return $this->keyPath ?? ($this->keyPath = \hash('sha1', $this->gitPath));
     }
 }
