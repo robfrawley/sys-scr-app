@@ -19,6 +19,7 @@
 
 # bin
 /bin/*
+!/bin/console.php
 !/bin/console
 !/bin/websiteconsole
 !/bin/adminconsole
