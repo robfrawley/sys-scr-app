@@ -1,12 +1,12 @@
 <?php
 
 /*
- * This file is part of Sulu.
+ * This file is part of the `src-run/src-run-web` project.
  *
- * (c) Sulu GmbH
+ * (c) Rob Frawley 2nd <rmf@src.run>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 // Workaround https://bugs.php.net/64566

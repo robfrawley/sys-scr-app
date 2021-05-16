@@ -1,22 +1,19 @@
 #!/usr/bin/env php
 <?php
 
+/*
+ * This file is part of the `src-run/src-run-web` project.
+ *
+ * (c) Rob Frawley 2nd <rmf@src.run>
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
+
 use Sulu\Component\HttpKernel\SuluKernel;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 require __DIR__.'/../vendor/autoload.php';
 
-$input = new ArgvInput();
-$output = new ConsoleOutput();
-$io = new SymfonyStyle($input, $output);
-
-$ansi = $input->getParameterOption(['--ansi']);
-
-if (!$ansi) {
-    $io->warning('This command will be executed in the "admin" context. For the "website" context, run ./bin/websiteconsole');
-}
-
 $suluContext = SuluKernel::CONTEXT_ADMIN;
+
 include __DIR__ . DIRECTORY_SEPARATOR. 'console.php';

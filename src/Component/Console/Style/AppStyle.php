@@ -13,7 +13,6 @@ namespace App\Component\Console\Style;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * @package App\Component\Console\Style
- */
-class AppStyle extends SymfonyStyle {}
+class AppStyle extends SymfonyStyle
+{
+}

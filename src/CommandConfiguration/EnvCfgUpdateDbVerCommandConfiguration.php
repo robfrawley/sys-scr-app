@@ -21,9 +21,6 @@ use Symfony\Component\Process\Process;
 
 class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
 {
-    /**
-     * @var string
-     */
     protected static string $commandReference = EnvCfgUpdateDbVerCommand::class;
 
     /**
@@ -62,7 +59,7 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
     /**
      * @return string|null
      */
-    public function getCommandDescText(): string|null
+    public function getCommandDescText(): string | null
     {
         return null;
     }
@@ -70,14 +67,11 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
     /**
      * @return string|null
      */
-    public function getCommandHelpText(): string|null
+    public function getCommandHelpText(): string | null
     {
         return null;
     }
 
-    /**
-     * @return VersionInterface
-     */
     public static function getInstalledDatabaseVersion(): VersionInterface
     {
         ($p = new Process(['apt', 'show', 'mariadb-server']))->run();

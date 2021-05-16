@@ -23,49 +23,29 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 interface CommandConfigurationInterface
 {
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator);
 
     /**
      * @return TranslatorInterface|LocaleAwareInterface
      */
-    public function getTranslator(): TranslatorInterface|LocaleAwareInterface;
+    public function getTranslator(): TranslatorInterface | LocaleAwareInterface;
 
     /**
-     * @param bool $enabled
-     *
      * @return $this
      */
     public function setEnabled(bool $enabled = true): self;
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool;
 
     /**
-     * @param AbstractCommand $command
-     * @param bool            $enabled
-     *
      * @return $this
      */
     public function setCommand(AbstractCommand $command, bool $enabled = true): self;
 
-    /**
-     * @return AbstractCommand
-     */
     public function getCommand(): AbstractCommand;
 
-    /**
-     * @return InputDefinition
-     */
     public function getCommandDefinition(): InputDefinition;
 
-    /**
-     * @return string
-     */
     public function getCommandReference(): string;
 
     /**
@@ -73,12 +53,6 @@ interface CommandConfigurationInterface
      */
     public function configure(): self;
 
-    /**
-     * @param InputInterface  $i
-     * @param OutputInterface $o
-     *
-     * @return AppStyle
-     */
     public function setUpExec(InputInterface $i, OutputInterface $o): AppStyle;
 
     /**
@@ -104,15 +78,15 @@ interface CommandConfigurationInterface
     /**
      * @return string|null
      */
-    public function getCommandDescText(): string|null;
+    public function getCommandDescText(): string | null;
 
     /**
      * @return string|null
      */
-    public function getCommandHelpText(): string|null;
+    public function getCommandHelpText(): string | null;
 
     /**
      * @return string[]|null
      */
-    public function getCommandAliasSet(): array|null;
+    public function getCommandAliasSet(): array | null;
 }

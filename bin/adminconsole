@@ -1,7 +1,19 @@
 #!/usr/bin/env php
 <?php
 
+/*
+ * This file is part of the `src-run/src-run-web` project.
+ *
+ * (c) Rob Frawley 2nd <rmf@src.run>
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
+
+use Sulu\Component\HttpKernel\SuluKernel;
+
 require __DIR__.'/../vendor/autoload.php';
 
-$suluContext = \Sulu\Component\HttpKernel\SuluKernel::CONTEXT_ADMIN;
+$suluContext = SuluKernel::CONTEXT_ADMIN;
+
 include __DIR__ . DIRECTORY_SEPARATOR. 'console.php';

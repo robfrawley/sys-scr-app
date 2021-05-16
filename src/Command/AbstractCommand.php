@@ -26,32 +26,26 @@ abstract class AbstractCommand extends Command
 {
     /**
      * Contains the default static name prefix for all application commands.
-     *
-     * @var string
      */
     protected static string $defaultPref = 'src-run';
 
     /**
      * Handles setting up the command configuration options, like arguments, options, description, help text, etc.
-     *
-     * @var CommandConfigurationInterface
      */
     protected CommandConfigurationInterface $configuration;
 
     /**
      * @var TranslatorInterface|LocaleAwareInterface
      */
-    protected TranslatorInterface|LocaleAwareInterface $localeAwTrans;
+    protected TranslatorInterface | LocaleAwareInterface $localeAwTrans;
 
     /**
      * @var AppStyle|null
      */
-    protected AppStyle|null $appStyle;
+    protected AppStyle | null $appStyle;
 
     /**
      * AbstractCommand constructor.
-     *
-     * @param CommandConfigurationInterface $configuration
      */
     public function __construct(CommandConfigurationInterface $configuration)
     {
@@ -62,55 +56,47 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * @return string|null
-     *
      * @throws ReflectionException
+     *
+     * @return string|null
      */
-    #[Pure] public static function getDefaultPref(): string|null
-    {
-        return property_exists(static::class, 'defaultPref') ? static::$defaultPref : null;
-    }
+    #[Pure]
+ public static function getDefaultPref(): string | null
+ {
+     return property_exists(static::class, 'defaultPref') ? static::$defaultPref : null;
+ }
 
     /**
-     * @return string|null
-     *
      * @throws ReflectionException
+     *
+     * @return string|null
      */
-    #[Pure] public static function getDefaultName(): string|null
-    {
-        return property_exists(static::class, 'defaultName') ? static::getDefaultPref().':'.static::$defaultName : null;
-    }
+    #[Pure]
+ public static function getDefaultName(): string | null
+ {
+     return property_exists(static::class, 'defaultName') ? static::getDefaultPref() . ':' . static::$defaultName : null;
+ }
 
     /**
      * Checks whether the command is enabled or not in the current environment.
-     *
-     * @return bool
      */
     public function isEnabled(): bool
     {
         return $this->configuration->isEnabled();
     }
 
-    /**
-     * @return string
-     */
     public static function getVersion(): string
     {
         return (new GitVersion('0.0.1'))->getVersion();
     }
 
-    /**
-     * @return AppStyle
-     */
     public function style(): AppStyle
     {
         if ($this->appStyle instanceof AppStyle) {
             return $this->appStyle;
         }
 
-        throw new \RuntimeException(sprintf(
-            'Command property "appStyle" for "%s" has not yet been assigned an instance of "%s"...', static::class, AppStyle::class
-        ));
+        throw new \RuntimeException(sprintf('Command property "appStyle" for "%s" has not yet been assigned an instance of "%s"...', static::class, AppStyle::class));
     }
 
     /**
@@ -122,13 +108,11 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
+     * @throws ReflectionException
      *
      * @return int|null
-     * @throws ReflectionException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int|null
+    protected function execute(InputInterface $input, OutputInterface $output): int | null
     {
         $this->appStyle = $this->configuration->setUpExec($input, $output);
         $this->style()->title(sprintf(

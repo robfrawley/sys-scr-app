@@ -30,25 +30,20 @@ class EnvCfgUpdateDbVerCommand extends AbstractCommand
      * @var string[]
      */
     protected static array $aliasesList = [
-        'sr:env:update:db-ver'
+        'sr:env:update:db-ver',
     ];
 
-    /**
-     * @param EnvCfgUpdateDbVerCommandConfiguration $configuration
-     */
     public function __construct(EnvCfgUpdateDbVerCommandConfiguration $configuration)
     {
         parent::__construct($configuration);
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
+     * @throws \ReflectionException
      *
      * @return int|null
-     * @throws \ReflectionException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int|null
+    protected function execute(InputInterface $input, OutputInterface $output): int | null
     {
         parent::execute($input, $output);
 

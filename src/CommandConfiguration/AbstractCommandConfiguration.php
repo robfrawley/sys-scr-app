@@ -28,11 +28,8 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
     /**
      * @var TranslatorInterface|LocaleAwareInterface
      */
-    private TranslatorInterface|LocaleAwareInterface $translator;
+    private TranslatorInterface | LocaleAwareInterface $translator;
 
-    /**
-     * @var AbstractCommand
-     */
     private AbstractCommand $command;
 
     /**
@@ -42,15 +39,13 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
 
     /**
      * {@inheritdoc}
-     *
-     * @param TranslatorInterface $translator
      */
     final public function __construct(TranslatorInterface $translator)
     {
         $this->setTranslator($translator);
     }
 
-    final public function setTranslator(TranslatorInterface|LocaleAwareInterface $translator): self
+    final public function setTranslator(TranslatorInterface | LocaleAwareInterface $translator): self
     {
         $this->translator = self::validateTranslatorIsLocaleAware($translator);
 
@@ -62,17 +57,13 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
      *
      * @return TranslatorInterface|LocaleAwareInterface
      */
-    final public function getTranslator(): TranslatorInterface|LocaleAwareInterface
+    final public function getTranslator(): TranslatorInterface | LocaleAwareInterface
     {
         return $this->translator;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @param bool $enabled
-     *
-     * @return CommandConfigurationInterface
      */
     final public function setEnabled(bool $enabled = true): CommandConfigurationInterface
     {
@@ -83,8 +74,6 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     final public function isEnabled(): bool
     {
@@ -93,11 +82,6 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
 
     /**
      * {@inheritdoc}
-     *
-     * @param AbstractCommand $command
-     * @param bool            $enabled
-     *
-     * @return CommandConfigurationInterface
      */
     final public function setCommand(AbstractCommand $command, bool $enabled = true): CommandConfigurationInterface
     {
@@ -107,25 +91,16 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
         return $this;
     }
 
-    /**
-     * @return AbstractCommand
-     */
     final public function getCommand(): AbstractCommand
     {
         return $this->command;
     }
 
-    /**
-     * @return InputDefinition
-     */
     final public function getCommandDefinition(): InputDefinition
     {
         return $this->getCommand()->getDefinition();
     }
 
-    /**
-     * @return string
-     */
     final public function getCommandReference(): string
     {
         try {
@@ -143,15 +118,11 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
             }
         }
 
-        throw new \RuntimeException(sprintf(
-            'Failed to determine command reference static property of "%s"...', static::class
-        ), 0, $failure ?? null);
+        throw new \RuntimeException(sprintf('Failed to determine command reference static property of "%s"...', static::class), 0, $failure ?? null);
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return CommandConfigurationInterface
      */
     public function configure(): CommandConfigurationInterface
     {
@@ -165,93 +136,9 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
             ->configureCommandAliasSet();
     }
 
-    /**
-     * @param InputInterface  $i
-     * @param OutputInterface $o
-     *
-     * @return AppStyle
-     */
     public function setUpExec(InputInterface $i, OutputInterface $o): AppStyle
     {
         return new AppStyle($i, $o);
-    }
-
-    /**
-     * @return CommandConfigurationInterface
-     */
-    final protected function configureCommandDefGlobalArgs(): CommandConfigurationInterface
-    {
-        $this->getCommandDefinition()->addArguments(
-            $this->getCommandDefGlobalArgs()
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return CommandConfigurationInterface
-     */
-    final protected function configureCommandDefGlobalOpts(): CommandConfigurationInterface
-    {
-        $this->getCommandDefinition()->addOptions(
-            $this->getCommandDefGlobalOpts()
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return CommandConfigurationInterface
-     */
-    final protected function configureCommandDefCustomArgs(): CommandConfigurationInterface
-    {
-        $this->getCommandDefinition()->addArguments(
-            $this->getCommandDefCustomArgs()
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return CommandConfigurationInterface
-     */
-   final protected function configureCommandDefCustomOpts(): CommandConfigurationInterface
-   {
-       $this->getCommandDefinition()->addOptions(
-           $this->getCommandDefCustomOpts()
-       );
-
-       return $this;
-   }
-
-    /**
-     * @return CommandConfigurationInterface
-     */
-    final protected function configureCommandDescText(): CommandConfigurationInterface
-    {
-        return $this->invokeIfStrArgNotNull(
-            $this->getCommandDescText(), fn($desc) => $this->getCommand()->setDescription($desc)
-        );
-    }
-
-    /**
-     * @return CommandConfigurationInterface
-     */
-    final protected function configureCommandHelpText(): CommandConfigurationInterface
-    {
-        return $this->invokeIfStrArgNotNull(
-            $this->getCommandHelpText(), fn($help) => $this->getCommand()->setHelp($help)
-        );
-    }
-
-    /**
-     * @return CommandConfigurationInterface
-     */
-    final protected function configureCommandAliasSet(): CommandConfigurationInterface
-    {
-        return $this->invokeIfStrArgNotNull(
-            $this->getCommandAliasSet(), fn($keys) => $this->getCommand()->setAliases($keys)
-        );
     }
 
     /**
@@ -275,7 +162,7 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
     /**
      * @return string[]|null
      */
-    final public function getCommandAliasSet(): array|null
+    final public function getCommandAliasSet(): array | null
     {
         try {
             $reflect = (new \ReflectionProperty(\get_class($this->getCommand()), 'aliasesList'));
@@ -283,20 +170,79 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
             $aliases = $reflect->getDeclaringClass()->getName() === $this->getCommandReference()
                 ? $reflect->getValue()
                 : null;
-        } catch (\ReflectionException $e) {}
+        } catch (\ReflectionException $e) {
+        }
 
         return $aliases ?? null;
     }
 
+    final protected function configureCommandDefGlobalArgs(): CommandConfigurationInterface
+    {
+        $this->getCommandDefinition()->addArguments(
+            $this->getCommandDefGlobalArgs()
+        );
+
+        return $this;
+    }
+
+    final protected function configureCommandDefGlobalOpts(): CommandConfigurationInterface
+    {
+        $this->getCommandDefinition()->addOptions(
+            $this->getCommandDefGlobalOpts()
+        );
+
+        return $this;
+    }
+
+    final protected function configureCommandDefCustomArgs(): CommandConfigurationInterface
+    {
+        $this->getCommandDefinition()->addArguments(
+            $this->getCommandDefCustomArgs()
+        );
+
+        return $this;
+    }
+
+    final protected function configureCommandDefCustomOpts(): CommandConfigurationInterface
+    {
+        $this->getCommandDefinition()->addOptions(
+           $this->getCommandDefCustomOpts()
+       );
+
+        return $this;
+    }
+
+    final protected function configureCommandDescText(): CommandConfigurationInterface
+    {
+        return $this->invokeIfStrArgNotNull(
+            $this->getCommandDescText(), fn ($desc) => $this->getCommand()->setDescription($desc)
+        );
+    }
+
+    final protected function configureCommandHelpText(): CommandConfigurationInterface
+    {
+        return $this->invokeIfStrArgNotNull(
+            $this->getCommandHelpText(), fn ($help) => $this->getCommand()->setHelp($help)
+        );
+    }
+
+    final protected function configureCommandAliasSet(): CommandConfigurationInterface
+    {
+        return $this->invokeIfStrArgNotNull(
+            $this->getCommandAliasSet(), fn ($keys) => $this->getCommand()->setAliases($keys)
+        );
+    }
+
     /**
      * @param string|string[]|null $v
-     * @param Closure     $c
      *
      * @return $this
      */
-    private function invokeIfStrArgNotNull(string|array|null $v, Closure $c): self
+    private function invokeIfStrArgNotNull(string | array | null $v, Closure $c): self
     {
-        if (null !== $v && false === empty($v)) { $c($v); }
+        if (null !== $v && false === empty($v)) {
+            $c($v);
+        }
 
         return $this;
     }
@@ -305,10 +251,9 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
      * Ensure the passed TranslatorInterface object is also an instance of LocaleAwareInterface.
      *
      * @param TranslatorInterface|LocaleAwareInterface $translator
-     *
-     * @return LocaleAwareInterface
      */
-    private static function validateTranslatorIsLocaleAware(TranslatorInterface|LocaleAwareInterface $translator): LocaleAwareInterface {
+    private static function validateTranslatorIsLocaleAware(TranslatorInterface | LocaleAwareInterface $translator): LocaleAwareInterface
+    {
         ClassAttributesAssertUtility::assertInstanceOf(
             $translator,
             LocaleAwareInterface::class,
