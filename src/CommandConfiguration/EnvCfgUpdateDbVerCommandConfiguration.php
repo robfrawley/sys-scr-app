@@ -12,7 +12,9 @@
 namespace App\CommandConfiguration;
 
 use App\Command\EnvCfgUpdateDbVerCommand;
+use App\Utility\Version\NullVersion;
 use App\Utility\Version\Version;
+use App\Utility\Version\VersionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
@@ -50,7 +52,9 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
                 'd',
                 InputOption::VALUE_OPTIONAL,
                 'The database version to set in the environment files.',
-                (string) self::getInstalledDatabaseVersion()
+                self::getInstalledDatabaseVersion()->getVersion(
+                    Version::VERSION_NAME | Version::VERSION_THREE
+                )
             ),
         ];
     }
@@ -72,17 +76,25 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
     }
 
     /**
-     * @return Version
+     * @return VersionInterface
      */
-    public static function getInstalledDatabaseVersion(): Version
+    public static function getInstalledDatabaseVersion(): VersionInterface
     {
-        $p = new Process(['mysql', '--version']);
-        $p->run();
+        ($p = new Process(['apt', 'show', 'mariadb-server']))->run();
 
-        if (!$p->isSuccessful()) {
+        preg_match(
+            '/^Version: (?:(?<release>[\d]+):)?(?<major>[\d]{1,2})\.(?<minor>[\d]{1,2})\.(?<patch>[\d]{1,2})(?<platform>[^\n]+)$/miu',
+            $p->getOutput(),
+            $matches,
+            PREG_UNMATCHED_AS_NULL
+        );
 
-        }
-
-        return new Version(0, 0, 0);
+        return false === $p->isSuccessful() ? new NullVersion('mariadb') : new Version(
+            'mariadb',
+            $matches['major'],
+            $matches['minor'],
+            $matches['patch'],
+            sprintf('%s%s', $matches['release'] ?? '', $matches['platform'] ?? '')
+        );
     }
 }

@@ -46,10 +46,15 @@ class EnvCfgUpdateDbVerCommand extends AbstractCommand
      * @param OutputInterface $output
      *
      * @return int|null
+     * @throws \ReflectionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
         parent::execute($input, $output);
+
+        $this->style()->success(sprintf(
+            'Resolved database type/version: "%s"', $input->getOption('db-version')
+        ));
 
         return 0;
     }

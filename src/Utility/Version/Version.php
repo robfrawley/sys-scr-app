@@ -213,7 +213,7 @@ final class Version implements VersionInterface
         $version = '';
 
         if ($flags->matchFlag(self::VERSION_NAME)) {
-            $version .= sprintf('[%s] ', $this->getName());
+            $version .= sprintf('%s-', $this->getName());
         }
 
         if ($flags->matchAnyFlag(self::VERSION_THREE | self::VERSION_PATCH | self::VERSION_MINOR | self::VERSION_MAJOR)) {
