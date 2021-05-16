@@ -126,6 +126,7 @@ abstract class AbstractCommand extends Command
      * @param OutputInterface $output
      *
      * @return int|null
+     * @throws ReflectionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {

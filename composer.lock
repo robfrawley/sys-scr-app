@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d6c811f608e25e4ca9c2f0a78803d89",
+    "content-hash": "ec5b06203d78f02ab898a4eecfe47d1c",
     "packages": [
         {
             "name": "antishov/doctrine-extensions-bundle",
@@ -3666,6 +3666,52 @@
                 "yml"
             ],
             "time": "2019-09-10T13:16:29+00:00"
+        },
+        {
+            "name": "niko9911/bitwise-flags",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NikoGrano/php-bitwise-flags.git",
+                "reference": "d68a4e03644188d6e2217de350f16b2f62e99d3a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NikoGrano/php-bitwise-flags/zipball/d68a4e03644188d6e2217de350f16b2f62e99d3a",
+                "reference": "d68a4e03644188d6e2217de350f16b2f62e99d3a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1|^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2",
+                "phpunit/phpunit": "^7 || ^8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Niko9911\\Flags\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Niko Grano",
+                    "email": "niko9911@ironlions.fi",
+                    "homepage": "https://xn--gran-8qa.fi",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Managing your flag booleans with bits.",
+            "support": {
+                "issues": "https://github.com/NikoGrano/php-bitwise-flags/issues",
+                "source": "https://github.com/NikoGrano/php-bitwise-flags/tree/1.0.2"
+            },
+            "time": "2021-04-08T11:02:19+00:00"
         },
         {
             "name": "nyholm/psr7",

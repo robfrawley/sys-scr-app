@@ -12,8 +12,10 @@
 namespace App\CommandConfiguration;
 
 use App\Command\EnvCfgUpdateDbVerCommand;
+use App\Utility\Version\Version;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Process\Process;
 
 class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
 {
@@ -27,7 +29,14 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
      */
     public function getCommandDefCustomArgs(): array
     {
-        return [];
+        return [
+            new InputArgument(
+                'env-file',
+                InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
+                'Paths to the environment files to update.',
+                []
+            ),
+        ];
     }
 
     /**
@@ -35,7 +44,15 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
      */
     public function getCommandDefCustomOpts(): array
     {
-        return [];
+        return [
+            new InputOption(
+                'db-version',
+                'd',
+                InputOption::VALUE_OPTIONAL,
+                'The database version to set in the environment files.',
+                (string) self::getInstalledDatabaseVersion()
+            ),
+        ];
     }
 
     /**
@@ -52,5 +69,20 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
     public function getCommandHelpText(): string|null
     {
         return null;
+    }
+
+    /**
+     * @return Version
+     */
+    public static function getInstalledDatabaseVersion(): Version
+    {
+        $p = new Process(['mysql', '--version']);
+        $p->run();
+
+        if (!$p->isSuccessful()) {
+
+        }
+
+        return new Version(0, 0, 0);
     }
 }

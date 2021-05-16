@@ -224,6 +224,9 @@
     "mustangostang/spyc": {
         "version": "0.6.3"
     },
+    "niko9911/bitwise-flags": {
+        "version": "1.0.2"
+    },
     "nyholm/psr7": {
         "version": "1.0",
         "recipe": {
