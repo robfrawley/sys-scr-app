@@ -14,6 +14,7 @@ namespace App\Command;
 use App\CommandConfiguration\EnvCfgUpdateDbVerCommandConfiguration;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
 
 class EnvCfgUpdateDbVerCommand extends AbstractCommand
 {
@@ -47,10 +48,44 @@ class EnvCfgUpdateDbVerCommand extends AbstractCommand
     {
         parent::execute($input, $output);
 
-        $this->style()->success(sprintf(
-            'Resolved database type/version: "%s"', $input->getOption('db-version')
+        $this->style()->note(sprintf(
+            'Resolved database type and version to be "%s".', $input->getOption('db-version')
         ));
 
+        $files = $this->resolveEnvFiles($input->getArgument('environment-file')) ?: $this->locateEnvFiles();
+
+        $this->style()->note(sprintf(
+            'Applying database version update to "%d" environment files:', count($files)
+        ));
+
+        $this->style()->listing($files);
+
         return 0;
+    }
+
+    /**
+     * @param string[] $files
+     *
+     * @return string[]
+     */
+    private function resolveEnvFiles(array $files): array
+    {
+        return array_filter(array_map(static fn (string $file) => realpath($file), $files));
+    }
+
+    /**
+     * @return string[]
+     */
+    private function locateEnvFiles(): array
+    {
+        ($finder = new Finder())
+            ->in(dirname(__DIR__, 2))
+            ->name('.env*')
+            ->depth(0)
+            ->ignoreDotFiles(false)
+            ->ignoreVCS(true)
+            ->files();
+
+        return $finder->hasResults() ? iterator_to_array($finder) : [];
     }
 }

@@ -13,7 +13,8 @@ namespace App\Command;
 
 use App\CommandConfiguration\CommandConfigurationInterface;
 use App\Component\Console\Style\AppStyle;
-use App\Utility\Version\GitVersion;
+use App\Utility\Version\Options\VersionOptionsInterface;
+use App\Utility\Version\Resolver\GitVersionResolver;
 use JetBrains\PhpStorm\Pure;
 use ReflectionException;
 use Symfony\Component\Console\Command\Command;
@@ -87,7 +88,7 @@ abstract class AbstractCommand extends Command
 
     public static function getVersion(): string
     {
-        return (new GitVersion('0.0.1'))->getVersion();
+        return (new GitVersionResolver('project-level-git'))->resolve()->getVersion(VersionOptionsInterface::VERSION_THREE | VersionOptionsInterface::VERSION_COMMIT);
     }
 
     public function style(): AppStyle
@@ -116,7 +117,7 @@ abstract class AbstractCommand extends Command
     {
         $this->appStyle = $this->configuration->setUpExec($input, $output);
         $this->style()->title(sprintf(
-            'Application Command: "%s" (%s)', self::getDefaultName(), self::getVersion()
+            'App Command => ["%s" (%s)]', self::getDefaultName(), self::getVersion()
         ));
 
         return null;

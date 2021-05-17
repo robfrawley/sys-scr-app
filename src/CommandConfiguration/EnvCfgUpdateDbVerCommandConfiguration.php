@@ -12,12 +12,13 @@
 namespace App\CommandConfiguration;
 
 use App\Command\EnvCfgUpdateDbVerCommand;
-use App\Utility\Version\NullVersion;
-use App\Utility\Version\Version;
-use App\Utility\Version\VersionInterface;
+use App\Utility\Version\Immutable\VersionImmutableInterface;
+use App\Utility\Version\Mutable\VersionMutable;
+use App\Utility\Version\Mutable\VersionMutableInterface;
+use App\Utility\Version\Nullable\VersionNullableInterface;
+use App\Utility\Version\Resolver\MariadbVersionResolver;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Process\Process;
 
 class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
 {
@@ -30,10 +31,10 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
     {
         return [
             new InputArgument(
-                'env-file',
+                'environment-file',
                 InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
                 'Paths to the environment files to update.',
-                []
+                null
             ),
         ];
     }
@@ -50,7 +51,7 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
                 InputOption::VALUE_OPTIONAL,
                 'The database version to set in the environment files.',
                 self::getInstalledDatabaseVersion()->getVersion(
-                    Version::VERSION_NAME | Version::VERSION_THREE
+                    VersionMutable::VERSION_NAME | VersionMutable::VERSION_THREE
                 )
             ),
         ];
@@ -72,23 +73,8 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
         return null;
     }
 
-    public static function getInstalledDatabaseVersion(): VersionInterface
+    public static function getInstalledDatabaseVersion(): VersionMutableInterface | VersionImmutableInterface | VersionNullableInterface
     {
-        ($p = new Process(['apt', 'show', 'mariadb-server']))->run();
-
-        preg_match(
-            '/^Version: (?:(?<release>[\d]+):)?(?<major>[\d]{1,2})\.(?<minor>[\d]{1,2})\.(?<patch>[\d]{1,2})(?<platform>[^\n]+)$/miu',
-            $p->getOutput(),
-            $matches,
-            PREG_UNMATCHED_AS_NULL
-        );
-
-        return false === $p->isSuccessful() ? new NullVersion('mariadb') : new Version(
-            'mariadb',
-            $matches['major'],
-            $matches['minor'],
-            $matches['patch'],
-            sprintf('%s%s', $matches['release'] ?? '', $matches['platform'] ?? '')
-        );
+        return (new MariadbVersionResolver('system-level-mariadb'))->resolve();
     }
 }

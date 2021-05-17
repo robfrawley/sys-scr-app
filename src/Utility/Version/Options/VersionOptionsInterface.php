@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Utility\Version;
+namespace App\Utility\Version\Options;
 
 use Niko9911\Flags\Bits;
 
-interface VersionInterface
+interface VersionOptionsInterface
 {
     /**
      * Includes the major version integer in the version output (ex: "name <x>.x.x[-suffix[@commit]]")
@@ -63,60 +63,4 @@ interface VersionInterface
      * @var int
      */
     public const VERSION_NAME = Bits::BIT_7;
-
-    public function __toString(): string;
-
-    public function getName(): string;
-
-    public function setName(string $name): self;
-
-    public function getMajor(): int;
-
-    public function setMajor(int $major): self;
-
-    /**
-     * @return int|null
-     */
-    public function getMinor(): int | null;
-
-    /**
-     * @param int|null $minor
-     */
-    public function setMinor(int | null $minor): self;
-
-    /**
-     * @return int|null
-     */
-    public function getPatch(): int | null;
-
-    /**
-     * @param int|null $patch
-     */
-    public function setPatch(int | null $patch): self;
-
-    /**
-     * @return string|null
-     */
-    public function getSuffix(): string | null;
-
-    /**
-     * @param string|null $suffix
-     */
-    public function setSuffix(string | null $suffix): self;
-
-    public function hasSuffix(): bool;
-
-    /**
-     * @return string|null
-     */
-    public function getCommit(): string | null;
-
-    /**
-     * @param string|null $commit
-     */
-    public function setCommit(string | null $commit): self;
-
-    public function hasCommit(): bool;
-
-    public function getVersion(int $options = self::VERSION_THREE | self::VERSION_SUFFIX): string;
 }
