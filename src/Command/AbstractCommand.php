@@ -13,10 +13,9 @@ namespace App\Command;
 
 use App\CommandConfiguration\CommandConfigurationInterface;
 use App\Component\Console\Style\AppStyle;
+use App\Component\Console\Style\AppStyleWrapper;
 use App\Utility\Version\Options\VersionOptionsInterface;
 use App\Utility\Version\Resolver\GitVersionResolver;
-use JetBrains\PhpStorm\Pure;
-use ReflectionException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,9 +40,13 @@ abstract class AbstractCommand extends Command
     protected TranslatorInterface | LocaleAwareInterface $localeAwTrans;
 
     /**
-     * @var AppStyle|null
+     * @var AppStyleWrapper|null
      */
-    protected AppStyle | null $appStyle;
+    protected AppStyleWrapper | null $style;
+
+    protected InputInterface $input;
+
+    protected OutputInterface $output;
 
     /**
      * AbstractCommand constructor.
@@ -56,31 +59,16 @@ abstract class AbstractCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * @throws ReflectionException
-     *
-     * @return string|null
-     */
-    #[Pure]
- public static function getDefaultPref(): string | null
- {
-     return property_exists(static::class, 'defaultPref') ? static::$defaultPref : null;
- }
+    public static function getDefaultPref(): string | null
+    {
+        return property_exists(static::class, 'defaultPref') ? static::$defaultPref : null;
+    }
 
-    /**
-     * @throws ReflectionException
-     *
-     * @return string|null
-     */
-    #[Pure]
- public static function getDefaultName(): string | null
- {
-     return property_exists(static::class, 'defaultName') ? static::getDefaultPref() . ':' . static::$defaultName : null;
- }
+    public static function getDefaultName(): string | null
+    {
+        return property_exists(static::class, 'defaultName') ? static::getDefaultPref() . ':' . static::$defaultName : null;
+    }
 
-    /**
-     * Checks whether the command is enabled or not in the current environment.
-     */
     public function isEnabled(): bool
     {
         return $this->configuration->isEnabled();
@@ -88,16 +76,18 @@ abstract class AbstractCommand extends Command
 
     public static function getVersion(): string
     {
-        return (new GitVersionResolver('project-level-git'))->resolve()->getVersion(VersionOptionsInterface::VERSION_THREE | VersionOptionsInterface::VERSION_COMMIT);
+        return (new GitVersionResolver('project-level-git'))
+            ->resolve()
+            ->getVersion(VersionOptionsInterface::VERSION_THREE | VersionOptionsInterface::VERSION_COMMIT);
     }
 
-    public function style(): AppStyle
+    public function style(): AppStyleWrapper
     {
-        if ($this->appStyle instanceof AppStyle) {
-            return $this->appStyle;
+        if ($this->style instanceof AppStyleWrapper) {
+            return $this->style;
         }
 
-        throw new \RuntimeException(sprintf('Command property "appStyle" for "%s" has not yet been assigned an instance of "%s"...', static::class, AppStyle::class));
+        throw new \RuntimeException(sprintf('Command property "style" for "%s" has not yet been assigned an instance of "%s"...', static::class, AppStyle::class));
     }
 
     /**
@@ -108,16 +98,13 @@ abstract class AbstractCommand extends Command
         $this->configuration->configure();
     }
 
-    /**
-     * @throws ReflectionException
-     *
-     * @return int|null
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int | null
     {
-        $this->appStyle = $this->configuration->setUpExec($input, $output);
+        $this->input = $input;
+        $this->output = $output;
+        $this->style = $this->configuration->setUpExec($input, $output);
         $this->style()->title(sprintf(
-            'App Command => ["%s" (%s)]', self::getDefaultName(), self::getVersion()
+            'App Command => ["%s" (v%s)]', self::getDefaultName(), self::getVersion()
         ));
 
         return null;

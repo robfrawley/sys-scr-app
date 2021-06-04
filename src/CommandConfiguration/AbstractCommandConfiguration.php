@@ -13,6 +13,7 @@ namespace App\CommandConfiguration;
 
 use App\Command\AbstractCommand;
 use App\Component\Console\Style\AppStyle;
+use App\Component\Console\Style\AppStyleWrapper;
 use App\Utility\Assert\ClassAttributesAssertUtility;
 use Closure;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,21 +26,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractCommandConfiguration implements CommandConfigurationInterface
 {
-    /**
-     * @var TranslatorInterface|LocaleAwareInterface
-     */
     private TranslatorInterface | LocaleAwareInterface $translator;
 
     private AbstractCommand $command;
 
-    /**
-     * @var bool|null
-     */
-    private bool $enabled;
+    private bool | null $enabled;
 
-    /**
-     * {@inheritdoc}
-     */
     final public function __construct(TranslatorInterface $translator)
     {
         $this->setTranslator($translator);
@@ -72,9 +64,6 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function isEnabled(): bool
     {
         return true === $this->enabled;
@@ -136,9 +125,9 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
             ->configureCommandAliasSet();
     }
 
-    public function setUpExec(InputInterface $i, OutputInterface $o): AppStyle
+    public function setUpExec(InputInterface $i, OutputInterface $o): AppStyleWrapper
     {
-        return new AppStyle($i, $o);
+        return new AppStyleWrapper(new AppStyle($i, $o));
     }
 
     /**

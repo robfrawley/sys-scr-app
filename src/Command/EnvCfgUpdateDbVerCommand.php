@@ -12,9 +12,11 @@
 namespace App\Command;
 
 use App\CommandConfiguration\EnvCfgUpdateDbVerCommandConfiguration;
+use App\Component\Finder\FileInfo;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class EnvCfgUpdateDbVerCommand extends AbstractCommand
 {
@@ -39,28 +41,95 @@ class EnvCfgUpdateDbVerCommand extends AbstractCommand
         parent::__construct($configuration);
     }
 
-    /**
-     * @throws \ReflectionException
-     *
-     * @return int|null
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int | null
     {
         parent::execute($input, $output);
 
-        $this->style()->note(sprintf(
-            'Resolved database type and version to be "%s".', $input->getOption('db-version')
+        $this->style()->info(sprintf(
+            'Resolved database type and version: <fg=white;bg=blue;options=bold>%s</>.', $input->getOption('db-version')
         ));
 
-        $files = $this->resolveEnvFiles($input->getArgument('environment-file')) ?: $this->locateEnvFiles();
+        $files = $this->getEnvFileInfos();
 
-        $this->style()->note(sprintf(
-            'Applying database version update to "%d" environment files:', count($files)
+        $this->style()->info(sprintf(
+            'Located the following %d environment variable files:', count($files)
         ));
 
         $this->style()->listing($files);
 
+        if (!$this->style()->style()->confirm('Continue and update the database version in the enumerated files?', true)) {
+            $this->style()->style()->warning('Terminating script operations per user request...');
+
+            return 0;
+        }
+
+        foreach ($files as $f) {
+            $this->handleFile($f);
+        }
+
         return 0;
+    }
+
+    private function handleFile(FileInfo $file): void
+    {
+        $this->style()->newLine();
+        $this->style()->section(sprintf(
+            'Reading contents of environment file %s (%s)', $file->getFilename(), $file->getSizeNumber()->__toString()
+        ));
+
+        if ((null === $match = $this->getEnvFileDbMatches($file)) || 3 !== count($match)) {
+            $this->style()->warning(sprintf(
+                'No database url entries found in file %s', $file->getFilename()
+            ));
+
+            return;
+        }
+
+        $contents = $original = $file->getContents();
+        $contents = str_replace($match['match'], sprintf('%s%s', $match['start'], $this->input->getOption('db-version')), $contents);
+
+        if ($contents === $original) {
+            $this->style()->info(sprintf('No updates required for environment file %s', $file));
+
+            return;
+        }
+
+        if (false === file_put_contents($file->getRealPath(), $contents, LOCK_EX)) {
+            $this->style()->caution(sprintf('Failed to update environment file %s', $file));
+
+            return;
+        }
+
+        $this->style()->info(sprintf('Update completed for environment file %s', $file));
+    }
+
+    private function getEnvFileDbMatches(FileInfo $file): array | null
+    {
+        if (1 !== preg_match('/^(?<start>DATABASE_URL=[a-z]+:\/\/.+?serverVersion=)(?<version>(?:[a-z]+-)?[\d]+\.[\d]+(?:\.[\d]+)?)/mi', $file->getContents(), $matches, PREG_UNMATCHED_AS_NULL)) {
+            return null;
+        }
+
+        return [
+            'match' => $matches[0],
+            'start' => $matches['start'],
+            'version' => $matches['version'],
+        ];
+    }
+
+    /**
+     * @return FileInfo[]
+     */
+    private function getEnvFileInfos(): array
+    {
+        return FileInfo::fromSplFileInfoArray(...$this->getEnvSplFileInfos());
+    }
+
+    /**
+     * @return SplFileInfo[]
+     */
+    private function getEnvSplFileInfos(): array
+    {
+        return $this->resolveEnvFiles($this->input->getArgument('environment-file')) ?: $this->locateEnvFiles();
     }
 
     /**

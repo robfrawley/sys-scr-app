@@ -12,7 +12,7 @@
 namespace App\CommandConfiguration;
 
 use App\Command\AbstractCommand;
-use App\Component\Console\Style\AppStyle;
+use App\Component\Console\Style\AppStyleWrapper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,7 +53,7 @@ interface CommandConfigurationInterface
      */
     public function configure(): self;
 
-    public function setUpExec(InputInterface $i, OutputInterface $o): AppStyle;
+    public function setUpExec(InputInterface $i, OutputInterface $o): AppStyleWrapper;
 
     /**
      * @return InputArgument[]
