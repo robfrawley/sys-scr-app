@@ -20,16 +20,9 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class EnvCfgUpdateDbVerCommand extends AbstractCommand
 {
-    /**
-     * Contains the static name of this command, which is used as the index to call the command from the cli console command.
-     *
-     * @var string
-     */
     protected static $defaultName = 'env-cfg:update:db-ver';
 
     /**
-     * Contains set of aliases that the command can also be called using.
-     *
      * @var string[]
      */
     protected static array $aliasesList = [

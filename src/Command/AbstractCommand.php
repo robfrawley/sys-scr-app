@@ -24,33 +24,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractCommand extends Command
 {
-    /**
-     * Contains the default static name prefix for all application commands.
-     */
     protected static string $defaultPref = 'src-run';
 
-    /**
-     * Handles setting up the command configuration options, like arguments, options, description, help text, etc.
-     */
     protected CommandConfigurationInterface $configuration;
 
-    /**
-     * @var TranslatorInterface|LocaleAwareInterface
-     */
     protected TranslatorInterface | LocaleAwareInterface $localeAwTrans;
 
-    /**
-     * @var AppStyleWrapper|null
-     */
     protected AppStyleWrapper | null $style;
 
     protected InputInterface $input;
 
     protected OutputInterface $output;
 
-    /**
-     * AbstractCommand constructor.
-     */
     public function __construct(CommandConfigurationInterface $configuration)
     {
         $this->configuration = $configuration->setCommand($this, true);
@@ -90,9 +75,6 @@ abstract class AbstractCommand extends Command
         throw new \RuntimeException(sprintf('Command property "style" for "%s" has not yet been assigned an instance of "%s"...', static::class, AppStyle::class));
     }
 
-    /**
-     * Configure command arguments, options, description, help text, and other command attributes.
-     */
     protected function configure(): void
     {
         $this->configuration->configure();

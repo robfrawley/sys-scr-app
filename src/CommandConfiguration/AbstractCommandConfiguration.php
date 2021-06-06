@@ -14,7 +14,6 @@ namespace App\CommandConfiguration;
 use App\Command\AbstractCommand;
 use App\Component\Console\Style\AppStyle;
 use App\Component\Console\Style\AppStyleWrapper;
-use App\Utility\Assert\ClassAttributesAssertUtility;
 use Closure;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -26,37 +25,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractCommandConfiguration implements CommandConfigurationInterface
 {
-    private TranslatorInterface | LocaleAwareInterface $translator;
-
-    private AbstractCommand $command;
-
-    private bool | null $enabled;
-
-    final public function __construct(TranslatorInterface $translator)
-    {
-        $this->setTranslator($translator);
+    final public function __construct(
+        public TranslatorInterface $translator,
+        private bool | null $enabled = null,
+        private AbstractCommand | null $command = null,
+    ) {
     }
 
-    final public function setTranslator(TranslatorInterface | LocaleAwareInterface $translator): self
-    {
-        $this->translator = self::validateTranslatorIsLocaleAware($translator);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return TranslatorInterface|LocaleAwareInterface
-     */
     final public function getTranslator(): TranslatorInterface | LocaleAwareInterface
     {
         return $this->translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function setEnabled(bool $enabled = true): CommandConfigurationInterface
     {
         $this->enabled = $enabled;
@@ -69,9 +49,6 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
         return true === $this->enabled;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final public function setCommand(AbstractCommand $command, bool $enabled = true): CommandConfigurationInterface
     {
         $this->command = $command;
@@ -110,9 +87,6 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
         throw new \RuntimeException(sprintf('Failed to determine command reference static property of "%s"...', static::class), 0, $failure ?? null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configure(): CommandConfigurationInterface
     {
         return $this
@@ -234,23 +208,5 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
         }
 
         return $this;
-    }
-
-    /**
-     * Ensure the passed TranslatorInterface object is also an instance of LocaleAwareInterface.
-     *
-     * @param TranslatorInterface|LocaleAwareInterface $translator
-     */
-    private static function validateTranslatorIsLocaleAware(TranslatorInterface | LocaleAwareInterface $translator): LocaleAwareInterface
-    {
-        ClassAttributesAssertUtility::assertInstanceOf(
-            $translator,
-            LocaleAwareInterface::class,
-            __CLASS__,
-            '__construct',
-            true
-        );
-
-        return $translator;
     }
 }

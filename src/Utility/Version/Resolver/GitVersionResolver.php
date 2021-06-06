@@ -13,51 +13,85 @@ namespace App\Utility\Version\Resolver;
 
 use App\Utility\Version\Immutable\VersionImmutable;
 use App\Utility\Version\Immutable\VersionImmutableInterface;
-use App\Utility\Version\Mutable\VersionMutableInterface;
 use App\Utility\Version\Nullable\VersionNullable;
 use App\Utility\Version\Nullable\VersionNullableInterface;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\Process\Process;
 
 class GitVersionResolver extends AbstractVersionResolver
 {
-    /**
-     * @var string | null
-     */
+    private const GIT_VER_PROCESS_AS_TAG_WITH_HASH = ['git', 'describe', '--long', '--always', '--tags'];
+    private const GIT_VER_PROCESS_AS_ALL_WITH_HASH = ['git', 'describe', '--long', '--always', '--all'];
+    private const GIT_SCH_OUTPUTS_AS_TAG_WITH_HASH = '/^(?<major>[\d]{1,2})\.(?<minor>[\d]{1,2})\.(?<patch>[\d]{1,2})(?:-(?<release>[\d]+))?(?:-(?<commit>[\w]+))?$/miu';
+    private const GIT_SCH_OUTPUTS_AS_ALL_WITH_HASH = '/^(?<release>[a-z]+\/[a-z]+(?:-[\d]+)?)(?:-(?<commit>[\w]+))?$/miu';
+
     private string $gitDirectoryPath;
 
     public function __construct(string | null $cacheKeyName, string | null $gitDirectoryPath = null)
     {
-        parent::__construct($cacheKeyName, $this->gitDirectoryPath = $gitDirectoryPath ?? dirname(__DIR__, 3));
+        parent::__construct($cacheKeyName, ($this->gitDirectoryPath = $gitDirectoryPath ?? dirname(__DIR__, 3)));
     }
 
-    public function resolveVersionInstance(): VersionMutableInterface | VersionImmutableInterface | VersionNullableInterface
+    public function resolveVersionInstance(): VersionImmutableInterface | VersionNullableInterface
     {
-        $process = (new Process(['git', 'describe', '--tags', '--long', '--always']))
-            ->setWorkingDirectory($this->gitDirectoryPath);
-
-        $process->run();
-
-        return ($process->isSuccessful() && (null !== $version = $this->parseCliVersionOutput($process->getOutput())))
-            ? $version
-            : new VersionNullable('git');
+        return
+            $this->resolveVersionInstanceFromProcessCall(self::GIT_VER_PROCESS_AS_ALL_WITH_HASH, function ($process, $default) {
+                return (null !== $version = self::parseGitVersionAsAllWithHashVersion($process->getOutput())) ? $version : $default;
+            }) ??
+            $this->resolveVersionInstanceFromProcessCall(self::GIT_VER_PROCESS_AS_TAG_WITH_HASH, function ($process, $default) {
+                return (null !== $version = self::parseGitVersionAsTagWithHashVersion($process->getOutput())) ? $version : $default;
+            }) ??
+            $this->resolveVersionInstanceFromProcessCall(self::GIT_VER_PROCESS_AS_ALL_WITH_HASH, function ($process, $default) {
+                return (null !== $version = self::parseGitVersionAsAllWithHashVersion($process->getOutput())) ? $version : $default;
+            });
     }
 
-    private function parseCliVersionOutput(string $output): VersionMutableInterface | VersionImmutableInterface | VersionNullableInterface | null
+    public function resolveVersionInstanceFromProcessCall(array $options, callable $parser): VersionImmutableInterface | VersionNullableInterface
     {
-        return ((null !== $matches = $this->parseCliVersionOutputSemVar($output)) || (null !== $matches = $this->parseCliVersionOutputHashed($output)))
-            ? new VersionImmutable('git', $matches['major'], $matches['minor'], $matches['patch'], sprintf('release:%d', $matches['release']), $matches['commit'])
-            : null;
+        $default = new VersionNullable('git');
+        $process = new Process($options);
+        $process
+            ->setWorkingDirectory($this->gitDirectoryPath)
+            ->run();
+
+        return $process->isSuccessful() ? $parser($process, $default) : $default;
     }
 
-    private function parseCliVersionOutputSemVar(string $output): array | null
+    private static function parseGitVersionAsTagWithHashVersion(string $output): VersionImmutableInterface | null
     {
-        return 1 === preg_match('/^(?<major>[\d]{1,2})\.(?<minor>[\d]{1,2})\.(?<patch>[\d]{1,2})(?:-(?<release>[\d]+))?(?:-(?<commit>[\w]+))?$/miu', $output, $matches, PREG_UNMATCHED_AS_NULL)
-            ? $matches
-            : null;
+        return (null !== $matches = self::parseGitVersionAsTagWithHashComponents($output)) ? self::createVersionFromMatches($matches) : null;
     }
 
-    private function parseCliVersionOutputHashed(string $output): array | null
+    private static function parseGitVersionAsAllWithHashVersion(string $output): VersionImmutableInterface | null
     {
-        return null;
+        return (null !== $matches = self::parseGitVersionAsAllWithHashComponents($output)) ? self::createVersionFromMatches($matches) : null;
+    }
+
+    private static function parseGitVersionAsTagWithHashComponents(string $output): array | null
+    {
+        return self::searchGitVersionOutputs(self::GIT_SCH_OUTPUTS_AS_TAG_WITH_HASH, $output);
+    }
+
+    private static function parseGitVersionAsAllWithHashComponents(string $output): array | null
+    {
+        return self::searchGitVersionOutputs(self::GIT_SCH_OUTPUTS_AS_ALL_WITH_HASH, $output);
+    }
+
+    private static function searchGitVersionOutputs(string $pattern, string $output): array | null
+    {
+        return (1 === preg_match($pattern, $output, $matches, PREG_UNMATCHED_AS_NULL)) ? $matches : null;
+    }
+
+    #[Pure]
+    private static function createVersionFromMatches(array $matches): VersionImmutableInterface
+    {
+        return new VersionImmutable(
+            'git',
+            $matches['major'] ?? 0,
+            $matches['minor'] ?? 0,
+            $matches['patch'] ?? 0,
+            sprintf('release:%d', $matches['release']),
+            $matches['commit']
+        );
     }
 }

@@ -13,11 +13,9 @@ namespace App\Component\Console\Style;
 
 class AppStyleWrapper
 {
-    private AppStyle $style;
-
-    public function __construct(AppStyle $style)
-    {
-        $this->style = $style;
+    public function __construct(
+        private AppStyle $style
+    ) {
     }
 
     public function __call(string $name, array $args): self

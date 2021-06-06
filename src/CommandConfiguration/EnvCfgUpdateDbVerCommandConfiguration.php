@@ -57,17 +57,11 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
         ];
     }
 
-    /**
-     * @return string|null
-     */
     public function getCommandDescText(): string | null
     {
         return null;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCommandHelpText(): string | null
     {
         return null;

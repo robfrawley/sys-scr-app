@@ -12,9 +12,11 @@
 namespace App\Utility\Version\Nullable;
 
 use App\Utility\Version\Immutable\VersionImmutable;
+use JetBrains\PhpStorm\Pure;
 
 class VersionNullable extends VersionImmutable implements VersionNullableInterface
 {
+    #[Pure]
     public function __construct(string | null $name = null)
     {
         parent::__construct($name);

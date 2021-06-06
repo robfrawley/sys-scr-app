@@ -22,8 +22,6 @@ class FileInfo extends SplFileInfo
     }
 
     /**
-     * @param SplFileInfo ...$fileInfos
-     *
      * @return SplFileInfo[]
      */
     public static function fromSplFileInfoArray(SplFileInfo ...$fileInfos): array

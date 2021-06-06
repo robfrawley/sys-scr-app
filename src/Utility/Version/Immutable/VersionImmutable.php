@@ -15,28 +15,17 @@ use App\Utility\Flags\BasicFlags;
 
 class VersionImmutable implements VersionImmutableInterface
 {
-    protected string | null $name;
-
-    protected int | null $major;
-
-    protected int | null $minor;
-
-    protected int | null $patch;
-
-    protected string | null $suffix;
-
-    protected string | null $commit;
-
     protected array $extras;
 
-    public function __construct(string | null $name, int | null $major = null, int | null $minor = null, int | null $patch = null, string | null $suffix = null, string | null $commit = null, string ...$extras)
-    {
-        $this->name = $name;
-        $this->major = $major;
-        $this->minor = $minor;
-        $this->patch = $patch;
-        $this->suffix = $suffix;
-        $this->commit = $commit;
+    public function __construct(
+        protected string | null $name,
+        protected int | null $major = null,
+        protected int | null $minor = null,
+        protected int | null $patch = null,
+        protected string | null $suffix = null,
+        protected string | null $commit = null,
+        string ...$extras
+    ) {
         $this->extras = $extras;
     }
 

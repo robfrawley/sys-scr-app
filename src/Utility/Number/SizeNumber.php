@@ -43,7 +43,7 @@ class SizeNumber
         $this->setFormat($format);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         [$value, $units, $power] = $this->scaledValueUnitsAndPower();
 
@@ -82,6 +82,9 @@ class SizeNumber
         return $this;
     }
 
+    /**
+     * @return int[]
+     */
     public function scaledValueUnitsAndPower(): array
     {
         if (0 === $this->bytes) {

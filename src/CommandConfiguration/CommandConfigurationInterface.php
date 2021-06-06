@@ -25,21 +25,12 @@ interface CommandConfigurationInterface
 {
     public function __construct(TranslatorInterface $translator);
 
-    /**
-     * @return TranslatorInterface|LocaleAwareInterface
-     */
     public function getTranslator(): TranslatorInterface | LocaleAwareInterface;
 
-    /**
-     * @return $this
-     */
     public function setEnabled(bool $enabled = true): self;
 
     public function isEnabled(): bool;
 
-    /**
-     * @return $this
-     */
     public function setCommand(AbstractCommand $command, bool $enabled = true): self;
 
     public function getCommand(): AbstractCommand;
@@ -48,9 +39,6 @@ interface CommandConfigurationInterface
 
     public function getCommandReference(): string;
 
-    /**
-     * @return $this
-     */
     public function configure(): self;
 
     public function setUpExec(InputInterface $i, OutputInterface $o): AppStyleWrapper;
