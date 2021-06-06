@@ -35,9 +35,6 @@ class GitVersionResolver extends AbstractVersionResolver
     public function resolveVersionInstance(): VersionImmutableInterface | VersionNullableInterface
     {
         return
-            $this->resolveVersionInstanceFromProcessCall(self::GIT_VER_PROCESS_AS_ALL_WITH_HASH, function ($process, $default) {
-                return (null !== $version = self::parseGitVersionAsAllWithHashVersion($process->getOutput())) ? $version : $default;
-            }) ??
             $this->resolveVersionInstanceFromProcessCall(self::GIT_VER_PROCESS_AS_TAG_WITH_HASH, function ($process, $default) {
                 return (null !== $version = self::parseGitVersionAsTagWithHashVersion($process->getOutput())) ? $version : $default;
             }) ??
