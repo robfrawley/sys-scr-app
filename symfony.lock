@@ -481,6 +481,15 @@
             "config/packages/lock.yaml"
         ]
     },
+    "symfony/loco-translation-provider": {
+        "version": "5.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.3",
+            "ref": "c706da68af4ae956f45cffccf99a130e9484cb33"
+        }
+    },
     "symfony/mime": {
         "version": "v5.2.6"
     },

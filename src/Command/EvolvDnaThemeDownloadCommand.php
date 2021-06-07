@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the `src-run/src-run-web` project.
+ * This file is part of the `src-run/sys-scr-app` project.
  *
  * (c) Rob Frawley 2nd <rmf@src.run>
  *
@@ -11,30 +11,30 @@
 
 namespace App\Command;
 
-use App\CommandConfiguration\EnvCfgUpdateDbVerCommandConfiguration;
+use App\CommandConfiguration\EvolvDnaThemeDownloadCommandConfiguration;
 use App\Component\Finder\FileInfo;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-class EnvCfgUpdateDbVerCommand extends AbstractCommand
+class EvolvDnaThemeDownloadCommand extends AbstractCommand
 {
-    protected static $defaultName = 'env-cfg:update:db-ver';
+    protected static $defaultName = 'evolv-dna:theme-dl';
 
-    /**
-     * @var string[]
-     */
-    protected static array $aliasesList = [
-        'sr:env:update:db-ver',
-    ];
-
-    public function __construct(EnvCfgUpdateDbVerCommandConfiguration $configuration)
+    public function __construct(EvolvDnaThemeDownloadCommandConfiguration $configuration)
     {
         parent::__construct($configuration);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int | null
+    {
+        parent::execute($input, $output);
+
+        return 0;
+    }
+
+    protected function executeBackup(InputInterface $input, OutputInterface $output): int | null
     {
         parent::execute($input, $output);
 
@@ -146,7 +146,8 @@ class EnvCfgUpdateDbVerCommand extends AbstractCommand
             ->depth(0)
             ->ignoreDotFiles(false)
             ->ignoreVCS(true)
-            ->files();
+            ->files()
+    ;
 
         return $finder->hasResults() ? iterator_to_array($finder) : [];
     }

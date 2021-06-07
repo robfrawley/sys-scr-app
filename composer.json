@@ -1,9 +1,9 @@
 {
-    "name": "robfrawley/src-run-web",
+    "name": "robfrawley/sys-scr-app",
     "description": "src-run website application",
     "license": "proprietary",
     "type": "project",
-    "homepage": "https://src.run/src-run-web",
+    "homepage": "https://src.run/sys-scr-app",
     "keywords": [
         "symfony",
         "sulu",
@@ -25,8 +25,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/robfrawley/src-run-web/issues",
-        "source": "https://github.com/robfrawley/src-run-web"
+        "issues": "https://github.com/robfrawley/sys-scr-app/issues",
+        "source": "https://github.com/robfrawley/sys-scr-app"
     },
     "require": {
         "php": "^8.0",
@@ -41,9 +41,13 @@
         "niko9911/bitwise-flags": "^1.0.2",
         "sulu/sulu": "~2.2.7",
         "symfony/config": "^5.1",
+        "symfony/console": "^5.3",
+        "symfony/dom-crawler": "^5.1",
         "symfony/dotenv": "^5.1",
         "symfony/flex": "^1.2",
         "symfony/framework-bundle": "^5.1",
+        "symfony/http-client": "^5.1",
+        "symfony/loco-translation-provider": "^5.1",
         "symfony/monolog-bridge": "^5.1",
         "symfony/monolog-bundle": "^3.1",
         "symfony/security-bundle": "^5.1",
@@ -52,7 +56,7 @@
         "symfony/twig-bundle": "^5.1"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.19",
+        "friendsofphp/php-cs-fixer": "^3.0",
         "phpcr/phpcr-shell": "^1.2",
         "roave/security-advisories": "dev-latest",
         "symfony/debug-bundle": "^5.1",
@@ -82,8 +86,9 @@
     },
     "scripts": {
         "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "src-run:env-cfg:update:db-ver": "symfony-cmd",
+            "cache:clear": "symfony-cmd"
+        },
+        "auto-scripts-sulu": {
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
             "bin/websiteconsole cache:clear": "php-script",
             "bin/adminconsole sulu:media:init": "php-script",

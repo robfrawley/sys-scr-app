@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the `src-run/src-run-web` project.
+ * This file is part of the `src-run/sys-scr-app` project.
  *
  * (c) Rob Frawley 2nd <rmf@src.run>
  *
@@ -96,7 +96,8 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
             ->configureCommandDefCustomOpts()
             ->configureCommandDescText()
             ->configureCommandHelpText()
-            ->configureCommandAliasSet();
+            ->configureCommandAliasSet()
+        ;
     }
 
     public function setUpExec(InputInterface $i, OutputInterface $o): AppStyleWrapper
@@ -123,20 +124,36 @@ abstract class AbstractCommandConfiguration implements CommandConfigurationInter
     }
 
     /**
-     * @return string[]|null
+     * @return string[]
      */
-    final public function getCommandAliasSet(): array | null
+    final public function getCommandDefPrefix(): string
+    {
+        try {
+            $reflect = (new \ReflectionProperty(\get_class($this->getCommand()), 'defaultPref'));
+            $reflect->setAccessible(true);
+            $defPref = $reflect->getValue();
+        } catch (\ReflectionException $e) {
+        }
+
+        return $defPref ?? '';
+    }
+
+    /**
+     * @return string[]
+     */
+    final public function getCommandAliasSet(): array
     {
         try {
             $reflect = (new \ReflectionProperty(\get_class($this->getCommand()), 'aliasesList'));
             $reflect->setAccessible(true);
-            $aliases = $reflect->getDeclaringClass()->getName() === $this->getCommandReference()
-                ? $reflect->getValue()
-                : null;
+            $aliases = array_map(
+                fn ($a) => sprintf('%s:%s', $this->getCommandDefPrefix(), $a),
+                $reflect->getDeclaringClass()->getName() === $this->getCommandReference() ? $reflect->getValue() : []
+            );
         } catch (\ReflectionException $e) {
         }
 
-        return $aliases ?? null;
+        return $aliases ?? [];
     }
 
     final protected function configureCommandDefGlobalArgs(): CommandConfigurationInterface

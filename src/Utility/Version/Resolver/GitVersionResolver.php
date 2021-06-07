@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the `src-run/src-run-web` project.
+ * This file is part of the `src-run/sys-scr-app` project.
  *
  * (c) Rob Frawley 2nd <rmf@src.run>
  *
@@ -21,8 +21,11 @@ use Symfony\Component\Process\Process;
 class GitVersionResolver extends AbstractVersionResolver
 {
     private const GIT_VER_PROCESS_AS_TAG_WITH_HASH = ['git', 'describe', '--long', '--always', '--tags'];
+
     private const GIT_VER_PROCESS_AS_ALL_WITH_HASH = ['git', 'describe', '--long', '--always', '--all'];
+
     private const GIT_SCH_OUTPUTS_AS_TAG_WITH_HASH = '/^(?<major>[\d]{1,2})\.(?<minor>[\d]{1,2})\.(?<patch>[\d]{1,2})(?:-(?<release>[\d]+))?(?:-(?<commit>[\w]+))?$/miu';
+
     private const GIT_SCH_OUTPUTS_AS_ALL_WITH_HASH = '/^(?<release>[a-z]+\/[a-z]+(?:-[\d]+)?)(?:-(?<commit>[\w]+))?$/miu';
 
     private string $gitDirectoryPath;
@@ -49,7 +52,8 @@ class GitVersionResolver extends AbstractVersionResolver
         $process = new Process($options);
         $process
             ->setWorkingDirectory($this->gitDirectoryPath)
-            ->run();
+            ->run()
+        ;
 
         return $process->isSuccessful() ? $parser($process, $default) : $default;
     }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the `src-run/src-run-web` project.
+ * This file is part of the `src-run/sys-scr-app` project.
  *
  * (c) Rob Frawley 2nd <rmf@src.run>
  *
@@ -11,18 +11,17 @@
 
 namespace App\CommandConfiguration;
 
-use App\Command\EnvCfgUpdateDbVerCommand;
+use App\Command\EvolvDnaThemeDownloadCommand;
 use App\Utility\Version\Immutable\VersionImmutableInterface;
-use App\Utility\Version\Mutable\VersionMutable;
 use App\Utility\Version\Mutable\VersionMutableInterface;
 use App\Utility\Version\Nullable\VersionNullableInterface;
 use App\Utility\Version\Resolver\MariadbVersionResolver;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
+class EvolvDnaThemeDownloadCommandConfiguration extends AbstractCommandConfiguration
 {
-    protected static string $commandReference = EnvCfgUpdateDbVerCommand::class;
+    protected static string $commandReference = EvolvDnaThemeDownloadCommand::class;
 
     /**
      * @return InputArgument[]
@@ -31,9 +30,9 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
     {
         return [
             new InputArgument(
-                'environment-file',
+                'links',
                 InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
-                'Paths to the environment files to update.',
+                'Links to theme pages on forum.evolvapor.com website.',
                 null
             ),
         ];
@@ -46,20 +45,25 @@ class EnvCfgUpdateDbVerCommandConfiguration extends AbstractCommandConfiguration
     {
         return [
             new InputOption(
-                'db-version',
-                'd',
+                'output-path',
+                'o',
                 InputOption::VALUE_OPTIONAL,
-                'The database version to set in the environment files.',
-                self::getInstalledDatabaseVersion()->getVersion(
-                    VersionMutable::VERSION_NAME | VersionMutable::VERSION_THREE
-                )
+                'The output directory path to write downloaded theme files to.',
+                getcwd()
+            ),
+            new InputOption(
+                'all-versions',
+                'a',
+                InputOption::VALUE_NONE,
+                'The output directory path to write downloaded theme files to.',
+                getcwd()
             ),
         ];
     }
 
     public function getCommandDescText(): string | null
     {
-        return null;
+        return 'Downloads Evolv DNA theme files (.ecigtheme) from the forum.evolvapor.com website forums.';
     }
 
     public function getCommandHelpText(): string | null

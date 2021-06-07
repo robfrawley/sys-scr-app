@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the `src-run/src-run-web` project.
+ * This file is part of the `src-run/sys-scr-app` project.
  *
  * (c) Rob Frawley 2nd <rmf@src.run>
  *
@@ -25,6 +25,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class AbstractCommand extends Command
 {
     protected static string $defaultPref = 'src-run';
+
+    protected static array $aliasesList = [];
 
     protected CommandConfigurationInterface $configuration;
 
@@ -63,7 +65,8 @@ abstract class AbstractCommand extends Command
     {
         return (new GitVersionResolver('project-level-git'))
             ->resolve()
-            ->getVersion(VersionOptionsInterface::VERSION_THREE | VersionOptionsInterface::VERSION_COMMIT);
+            ->getVersion(VersionOptionsInterface::VERSION_THREE | VersionOptionsInterface::VERSION_COMMIT)
+        ;
     }
 
     public function style(): AppStyleWrapper
